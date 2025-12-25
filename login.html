@@ -20,9 +20,7 @@
         <button class="btn" id="btnKakao">Kakao로 로그인</button>
       </div>
 
-      <div class="note">
-        로그인 후 자동으로 홈으로 돌아가요.
-      </div>
+      <div class="note">로그인 후 자동으로 홈으로 돌아가요.</div>
     </div>
   </main>
 
@@ -30,9 +28,6 @@
     import { supabase, renderHeader } from "./supabase.js";
     await renderHeader();
 
-    // ✅ redirectTo는 "현재 사이트 주소 + /index.html" 로 고정
-    // 로컬: http://127.0.0.1:5500/index.html
-    // 배포: https://xxx.vercel.app/index.html
     const redirectTo = location.origin + "/index.html";
 
     document.getElementById("btnGoogle").onclick = () =>

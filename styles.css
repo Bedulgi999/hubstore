@@ -47,25 +47,62 @@ a{ color:inherit; text-decoration:none; }
 .brand-title{ font-weight:800; letter-spacing:-.2px; }
 .brand-sub{ font-size:12px; color: var(--muted); margin-top:2px; }
 
+/* ✅ 헤더 버튼 꾸미기 (요청사항) */
 .nav{ display:flex; gap:10px; align-items:center; }
-.nav-btn{
-  border: 1px solid var(--line);
-  background: #fff;
-  padding: 9px 12px;
-  border-radius: 12px;
-  font-weight:700;
-  cursor:pointer;
-}
-.nav-btn.ghost{ background: transparent; }
-.nav-btn.primary{
-  border: none;
-  background: linear-gradient(135deg, var(--brand), var(--brand2));
-  color: #fff;
-  box-shadow: 0 10px 25px rgba(109,94,252,.25);
-}
 .nav.pulse{ animation: pulse .4s ease; }
 @keyframes pulse { from{ transform:scale(.99); opacity:.85;} to{transform:scale(1); opacity:1;} }
 
+.nav-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding: 10px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.85);
+  backdrop-filter: blur(10px);
+  font-weight: 900;
+  cursor:pointer;
+  transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+}
+.nav-pill:hover{ transform: translateY(-1px); box-shadow: 0 10px 22px rgba(18,18,35,.10); }
+.nav-pill.primary{
+  border: none;
+  color:#fff;
+  background: linear-gradient(135deg, var(--brand), var(--brand2));
+  box-shadow: 0 12px 26px rgba(109,94,252,.25);
+}
+.nav-pill.ghost{ background: transparent; }
+.nav-ic{ opacity:.95; }
+.nav-tx{ letter-spacing:-.2px; }
+
+/* ✅ 프로필 버튼 꾸미기 */
+.nav-profile{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(109,94,252,.22);
+  background: rgba(109,94,252,.08);
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.nav-profile:hover{ transform: translateY(-1px); box-shadow: 0 10px 22px rgba(109,94,252,.12); }
+
+.avatar{
+  width: 34px; height: 34px;
+  display:grid; place-items:center;
+  border-radius: 999px;
+  color:#fff;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--brand), var(--brand2));
+  box-shadow: 0 10px 20px rgba(109,94,252,.25);
+}
+.profile-tx{ display:flex; flex-direction:column; line-height:1.05; }
+.profile-name{ font-weight: 900; font-size: 13px; }
+.profile-sub{ font-size: 11px; color: rgba(16,18,26,.55); font-weight: 800; }
+
+/* 기존 카드/레이아웃 */
 .card{
   background: var(--card);
   border: 1px solid var(--line);
@@ -89,8 +126,9 @@ a{ color:inherit; text-decoration:none; }
   min-height: 240px;
 }
 
+/* ✅ 배너 내용이 화살표에 안 가리게 좌우 안전 여백 추가 */
 .banner-content{
-  padding: 26px 26px 18px;
+  padding: 26px 46px 18px; /* ← 좌/우 패딩 증가(기존 26px) */
   flex: 1.2;
   display:flex;
   flex-direction:column;
@@ -157,20 +195,23 @@ a{ color:inherit; text-decoration:none; }
   border: 1px solid rgba(109,94,252,.18);
 }
 
+/* ✅ 화살표 버튼 개선: 더 작게 + 살짝 바깥쪽 + 반투명 */
 .icon-btn{
   position:absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 40px; height: 40px;
+  width: 34px; height: 34px;        /* ← 기존 40 */
   border-radius: 999px;
   border: 1px solid var(--line);
-  background: rgba(255,255,255,.78);
+  background: rgba(255,255,255,.70);
   backdrop-filter: blur(10px);
-  font-size: 22px;
+  font-size: 20px;
   cursor:pointer;
+  z-index: 2;
 }
-.icon-btn.left{ left: 12px; }
-.icon-btn.right{ right: 12px; }
+.icon-btn:hover{ background: rgba(255,255,255,.90); }
+.icon-btn.left{ left: 8px; }        /* ← 기존 12 */
+.icon-btn.right{ right: 8px; }      /* ← 기존 12 */
 
 .dots{
   display:flex;

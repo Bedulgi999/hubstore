@@ -68,7 +68,6 @@
       </div>
 
       <div class="grid sellers" id="sellers">
-        <!-- empty state -->
         <div class="empty">
           <strong>판매자가 아직 없어요</strong>
           <span class="muted">관리자에서 sellers 데이터를 추가하면 여기에 보여요.</span>
@@ -95,7 +94,7 @@
 
   <script type="module">
     import { renderHeader } from "./supabase.js";
-    await renderHeader(); // ✅ 로그인 상태에 따라 헤더 버튼 자동 변경
+    await renderHeader();
 
     // ----- Banner slider -----
     const banners = [
@@ -152,19 +151,16 @@
     renderBanner();
     timer = setInterval(next, 5000);
 
-    // ----- Search UI (프론트용) -----
+    // ----- Search UI -----
     const q = document.getElementById("q");
     const btnClear = document.getElementById("btnClear");
     btnClear.onclick = () => { q.value = ""; q.focus(); };
 
     const chips = document.getElementById("categoryChips");
-    let cat = "";
     chips.querySelectorAll(".chip").forEach(btn => {
       btn.onclick = () => {
         chips.querySelectorAll(".chip").forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
-        cat = btn.dataset.cat;
-        // 여기서 실제 상품 필터링 연결하면 됨 (나중에 Supabase 데이터 연결 시)
       };
     });
   </script>
