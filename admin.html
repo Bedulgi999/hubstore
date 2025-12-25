@@ -4,37 +4,18 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>관리자 - 허브 스토어</title>
-  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
-  <div id="topbar"></div>
+  <div id="header"></div>
 
-  <main class="container">
-    <div class="card">
-      <div class="card-body">
-        <h2 style="margin:0 0 10px">관리자</h2>
-        <div class="muted" style="margin-bottom:12px">
-          이 페이지는 <b>profiles.is_admin = true</b> 인 계정만 볼 수 있어.
-        </div>
-        <div class="muted">여기에 배너/카테고리/상품 업로드 UI를 붙이면 됨.</div>
-      </div>
-    </div>
+  <main class="container" style="padding:22px 0;">
+    <div id="adminBox"></div>
   </main>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script type="module">
-    import { getUser, isAdmin, renderTopbar } from "./supabase.js";
-
-    renderTopbar();
-
-    const user = await getUser();
-    if (!user) location.href = "/login.html";
-
-    const ok = await isAdmin();
-    if (!ok) {
-      alert("관리자만 접근 가능!");
-      location.href = "/index.html";
-    }
+    import { initAdminPage } from "/app.js";
+    initAdminPage();
   </script>
 </body>
 </html>

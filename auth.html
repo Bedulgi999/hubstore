@@ -3,25 +3,24 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Auth</title>
+  <title>로그인 처리중...</title>
   <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
-  <div class="container">
-    <div class="card p16">로그인 처리 중...</div>
-  </div>
+  <main class="page">
+    <div class="container" style="padding:60px 16px; text-align:center;">
+      <div class="card pad" style="max-width:520px;margin:0 auto;">
+        <h2 style="margin:0 0 10px;">로그인 처리중...</h2>
+        <p class="muted" style="margin:0;">잠시만 기다려줘</p>
+      </div>
+    </div>
+  </main>
 
-  <script type="module" src="/supabase.js"></script>
   <script type="module">
-    const sb = window.supabase;
-    // v2는 URL에 포함된 정보를 바탕으로 세션을 자동 처리함.
-    await sb.auth.getSession();
+    import { supabase } from "/supabase.js";
+    // detectSessionInUrl: true 로 인해 여기서 세션이 정리됨
+    await supabase.auth.getSession();
     location.href = "/index.html";
   </script>
-  <link rel="stylesheet" href="./styles.css" />
-
-<script type="module" src="./supabase.js"></script>
-<script type="module" src="./common.js"></script>
-
 </body>
 </html>

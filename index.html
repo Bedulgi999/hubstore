@@ -4,44 +4,291 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>허브 스토어</title>
-  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
-  <!-- ✅ 헤더 마운트 -->
-  <div id="topbar"></div>
+  <div id="header"></div>
 
-  <main class="container">
-    <div class="grid">
-      <section class="card">
-        <div class="hero" id="hero"></div>
+  <main class="page">
+    <div class="container">
+
+      <section class="hero">
+        <!-- Banner -->
+        <div class="card banner" id="banner">
+          <div class="banner-bg"></div>
+
+          <!-- slides -->
+          <div id="bannerSlides"></div>
+
+          <!-- arrows -->
+          <div class="banner-nav">
+            <button id="prevBtn" aria-label="prev">‹</button>
+            <button id="nextBtn" aria-label="next">›</button>
+          </div>
+
+          <!-- dots -->
+          <div class="dots" id="dots"></div>
+        </div>
+
+        <!-- Search -->
+        <div class="card pad search">
+          <h3>빠른 검색</h3>
+          <div class="muted" style="font-weight:700;">상품 제목으로 검색할 수 있어</div>
+          <div style="margin-top:10px;">
+            <input class="input" id="q" placeholder="예: 러시안룰렛, RPG, 서버팩" />
+          </div>
+
+          <div class="hr"></div>
+          <div class="muted" style="font-weight:800;margin-bottom:10px;">카테고리</div>
+          <div class="filters" id="categoryChips"></div>
+
+          <div class="notice" style="margin-top:12px;">
+            💡 팁: 배너는 자동으로 넘어가고, 화살표로도 이동 가능해요.
+          </div>
+        </div>
       </section>
 
-      <aside class="card">
-        <div class="card-body">
-          <div style="font-weight:800;margin-bottom:6px">빠른 검색</div>
-          <div class="muted" style="margin-bottom:10px">상품 제목으로 검색할 수 있어</div>
-          <input class="input" placeholder="예: 러시안룰렛, RPG, 서버팩" />
-          <div class="muted" style="margin-top:10px">검색하면 아래 상품이 필터링돼</div>
-        </div>
-      </aside>
+      <h2 class="section-title">추천 판매자 리스트!</h2>
+      <div class="grid" id="sellerGrid"></div>
+
+      <h2 class="section-title">최고 인기 상품</h2>
+      <div class="grid" id="productGrid"></div>
+
+      <div class="footer">© 2025 허브 스토어 · Supabase + Static</div>
     </div>
-
-    <section class="section">
-      <h3>추천 판매자 리스트!</h3>
-      <div id="sellers" class="muted">불러오는 중…</div>
-    </section>
-
-    <section class="section">
-      <h3>최고 인기 상품</h3>
-      <div id="products" class="muted">불러오는 중…</div>
-    </section>
-
-    <div class="footer">© 2025 허브 스토어 · Supabase + Static</div>
   </main>
 
-  <!-- ✅ 순서 중요 -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script type="module" src="./supabase.js"></script>
-  <script type="module" src="./app.js"></script>
+  <script type="module">
+    import { renderHeader, enableHeaderAutoRefresh } from "/header.js";
+    import { supabase } from "/supabase.js";
+
+    await renderHeader();
+    enableHeaderAutoRefresh();
+
+    // ---------- Data loaders ----------
+    async function loadBanners() {
+      // banners: (id, title, subtitle, cta_label, cta_url, is_active, sort_order)
+      const { data, error } = await supabase
+        .from("banners")
+        .select("*")
+        .eq("is_active", true)
+        .order("sort_order", { ascending: true })
+        .limit(6);
+
+      if (error) {
+        console.warn("banners load error:", error.message);
+        return [
+          { title:"배너1", subtitle:"인기 미니게임 팩 할인!", cta_label:"바로가기", cta_url:"#"},
+          { title:"배너2", subtitle:"신규 서버팩 출시", cta_label:"전체 상품", cta_url:"#"},
+          { title:"배너3", subtitle:"공식 이벤트 안내", cta_label:"공지/이벤트", cta_url:"#"},
+        ];
+      }
+      return (data?.length ? data : []);
+    }
+
+    async function loadCategories() {
+      // categories: (id, name, sort_order, is_active)
+      const { data, error } = await supabase
+        .from("categories")
+        .select("*")
+        .eq("is_active", true)
+        .order("sort_order", { ascending: true });
+
+      if (error) {
+        console.warn("categories load error:", error.message);
+        return ["전체", "미니게임", "서버팩"];
+      }
+      return ["전체", ...(data || []).map(x => x.name)];
+    }
+
+    async function loadSellers() {
+      // sellers: (id, display_name, tagline, is_verified, badge_recommended, avatar_url)
+      const { data, error } = await supabase
+        .from("sellers")
+        .select("*")
+        .order("badge_recommended", { ascending: false })
+        .limit(6);
+
+      if (error) {
+        console.warn("sellers load error:", error.message);
+        return [];
+      }
+      return data || [];
+    }
+
+    async function loadProducts({ q = "", category = "전체" } = {}) {
+      // products: (id, title, price, seller_name(or join), is_published, category, cover_url)
+      let query = supabase
+        .from("products")
+        .select("*")
+        .eq("is_published", true)
+        .order("created_at", { ascending: false })
+        .limit(12);
+
+      if (q?.trim()) query = query.ilike("title", `%${q.trim()}%`);
+      if (category && category !== "전체") query = query.eq("category", category);
+
+      const { data, error } = await query;
+      if (error) {
+        console.warn("products load error:", error.message);
+        return [];
+      }
+      return data || [];
+    }
+
+    // ---------- UI renderers ----------
+    function renderSellers(list) {
+      const el = document.getElementById("sellerGrid");
+      if (!list.length) {
+        el.innerHTML = `<div class="muted" style="font-weight:800;">판매자가 아직 없어요. (admin에서 sellers 데이터 먼저 넣어줘)</div>`;
+        return;
+      }
+      el.innerHTML = list.map(s => `
+        <div class="card item">
+          <div class="thumb"></div>
+          <div class="body">
+            <div class="name">${escapeHtml(s.display_name || "Seller")}</div>
+            <div class="sub">${escapeHtml(s.tagline || "")}</div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function renderProducts(list) {
+      const el = document.getElementById("productGrid");
+      if (!list.length) {
+        el.innerHTML = `<div class="muted" style="font-weight:800;">상품이 아직 없어요. (admin에서 products 등록해줘)</div>`;
+        return;
+      }
+      el.innerHTML = list.map(p => `
+        <div class="card item">
+          <div class="thumb"></div>
+          <div class="body">
+            <div class="name">${escapeHtml(p.title || "Product")}</div>
+            <div class="sub">${escapeHtml(p.category || "")} · ${formatPrice(p.price)}</div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function escapeHtml(s){
+      return (s ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;");
+    }
+    function formatPrice(n){
+      const v = Number(n || 0);
+      return v.toLocaleString("ko-KR") + "원";
+    }
+
+    // ---------- Banner carousel ----------
+    let banners = [];
+    let idx = 0;
+    let timer = null;
+
+    function renderBanners() {
+      const slides = document.getElementById("bannerSlides");
+      const dots = document.getElementById("dots");
+
+      if (!banners.length) {
+        slides.innerHTML = `
+          <div class="banner-slide active">
+            <div class="banner-content">
+              <span class="badge">EVENT</span>
+              <div class="banner-title">배너 없음</div>
+              <div class="banner-sub">admin에서 banners를 추가해줘</div>
+              <div class="banner-actions">
+                <a class="btn primary" href="/admin.html">관리자 열기</a>
+              </div>
+            </div>
+          </div>
+        `;
+        dots.innerHTML = "";
+        return;
+      }
+
+      slides.innerHTML = banners.map((b, i) => `
+        <div class="banner-slide ${i === idx ? "active" : ""}">
+          <div class="banner-content">
+            <span class="badge">EVENT</span>
+            <div class="banner-title">${escapeHtml(b.title || `배너${i+1}`)}</div>
+            <div class="banner-sub">${escapeHtml(b.subtitle || "")}</div>
+            <div class="banner-actions">
+              <a class="btn primary" href="${escapeHtml(b.cta_url || "#")}">${escapeHtml(b.cta_label || "바로가기")}</a>
+              <a class="btn" href="/index.html">전체 상품</a>
+            </div>
+          </div>
+        </div>
+      `).join("");
+
+      dots.innerHTML = banners.map((_, i) => `
+        <div class="dot ${i===idx ? "active":""}" data-i="${i}"></div>
+      `).join("");
+
+      dots.querySelectorAll(".dot").forEach(d => {
+        d.addEventListener("click", () => {
+          idx = Number(d.dataset.i);
+          renderBanners();
+          restartAuto();
+        });
+      });
+    }
+
+    function next() {
+      if (!banners.length) return;
+      idx = (idx + 1) % banners.length;
+      renderBanners();
+    }
+    function prev() {
+      if (!banners.length) return;
+      idx = (idx - 1 + banners.length) % banners.length;
+      renderBanners();
+    }
+    function restartAuto() {
+      if (timer) clearInterval(timer);
+      timer = setInterval(next, 4500);
+    }
+
+    document.getElementById("nextBtn").addEventListener("click", () => { next(); restartAuto(); });
+    document.getElementById("prevBtn").addEventListener("click", () => { prev(); restartAuto(); });
+
+    // ---------- Category filters + search ----------
+    let currentCategory = "전체";
+    let currentQ = "";
+
+    function renderCategoryChips(list) {
+      const el = document.getElementById("categoryChips");
+      el.innerHTML = list.map(name => `
+        <button class="pill ${name===currentCategory ? "active":""}" data-name="${escapeHtml(name)}">${escapeHtml(name)}</button>
+      `).join("");
+      el.querySelectorAll(".pill").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          currentCategory = btn.dataset.name;
+          renderCategoryChips(list);
+          const items = await loadProducts({ q: currentQ, category: currentCategory });
+          renderProducts(items);
+        });
+      });
+    }
+
+    document.getElementById("q").addEventListener("input", async (e) => {
+      currentQ = e.target.value || "";
+      const items = await loadProducts({ q: currentQ, category: currentCategory });
+      renderProducts(items);
+    });
+
+    // ---------- Boot ----------
+    banners = await loadBanners();
+    idx = 0;
+    renderBanners();
+    restartAuto();
+
+    const cats = await loadCategories();
+    renderCategoryChips(cats);
+
+    renderSellers(await loadSellers());
+    renderProducts(await loadProducts({ q: "", category: "전체" }));
+  </script>
 </body>
 </html>

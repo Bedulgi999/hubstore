@@ -4,33 +4,33 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>프로필 - 허브 스토어</title>
-  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
-  <div id="topbar"></div>
+  <div id="header"></div>
 
-  <main class="container">
-    <div class="card">
-      <div class="card-body">
-        <h2 style="margin:0 0 10px">프로필</h2>
-        <div id="info" class="muted">불러오는 중…</div>
+  <main class="page">
+    <div class="container">
+      <div class="card pad">
+        <h2 style="margin:0 0 10px;">프로필</h2>
+        <div class="muted" id="email">불러오는 중...</div>
+        <div class="hr"></div>
+        <div class="notice">여기서 나중에 구매내역/판매자 신청 같은 걸 넣으면 돼.</div>
       </div>
     </div>
   </main>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script type="module">
-    import { getUser, renderTopbar, escapeHtml } from "./supabase.js";
+    import { renderHeader, enableHeaderAutoRefresh } from "/header.js";
+    import { getUser } from "/supabase.js";
 
-    renderTopbar();
+    await renderHeader();
+    enableHeaderAutoRefresh();
 
-    const user = await getUser();
+    const user = await getUser({ force: true });
     if (!user) location.href = "/login.html";
 
-    document.getElementById("info").innerHTML = `
-      <div>이메일: <b>${escapeHtml(user.email || "")}</b></div>
-      <div class="muted" style="margin-top:6px">UID: ${escapeHtml(user.id)}</div>
-    `;
+    document.getElementById("email").textContent = user.email || user.id;
   </script>
 </body>
 </html>
