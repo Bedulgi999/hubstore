@@ -5,7 +5,7 @@ export async function renderHeader() {
   const host = document.getElementById("header");
   if (!host) return;
 
-  const user = await getUser();
+  const user = await getUser({ force: true });
   const admin = user ? await isAdmin() : false;
 
   host.innerHTML = `
