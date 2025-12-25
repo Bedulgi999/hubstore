@@ -7,34 +7,38 @@
   <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
+  <div id="header"></div>
+
   <main class="page">
     <div class="container" style="padding:60px 16px; text-align:center;">
       <div class="card pad" style="max-width:520px;margin:0 auto;">
         <h2 style="margin:0 0 10px;">로그인 처리중...</h2>
         <p class="muted" style="margin:0;" id="msg">세션 확인 중...</p>
+        <div class="hr"></div>
+        <div class="notice" id="detail" style="text-align:left; display:none;"></div>
       </div>
     </div>
   </main>
 
   <script type="module">
     import { supabase } from "/supabase.js";
+    import { renderHeader, enableHeaderAutoRefresh } from "/header.js";
 
-    // 1) OAuth 콜백 URL에서 세션 읽기
-    const { data, error } = await supabase.auth.getSession();
-    if (error) console.error(error);
+    await renderHeader();
+    enableHeaderAutoRefresh();
 
-    // 2) 혹시 세션이 바로 안 잡히는 경우를 대비해 한번 더
-    const session = data?.session || (await supabase.auth.getSession()).data?.session;
+    const params = new URL(location.href).searchParams;
+    const err = params.get("error") || params.get("error_code");
+    const desc = params.get("error_description");
 
-    if (!session) {
-      document.getElementById("msg").textContent =
-        "세션을 못 찾았어요. Supabase Redirect URL 설정을 확인해줘.";
-      console.log("No session. URL:", location.href);
-      // 2초 뒤 login으로
-      setTimeout(() => location.href = "/login.html", 2000);
+    if (err) {
+      document.getElementById("msg").textContent = "로그인 실패. 로그인 페이지로 이동합니다.";
+      const detail = document.getElementById("detail");
+      detail.style.display = "block";
+      detail.textContent = `error: ${err}\n${desc || ""}`;
+      setTimeout(() => location.href = "/login.html", 1500);
     } else {
-      document.getElementById("msg").textContent = "로그인 완료! 홈으로 이동중...";
-      // 3) 깔끔하게 홈으로
+      await supabase.auth.getSession();
       location.href = "/index.html";
     }
   </script>
