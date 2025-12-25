@@ -11,72 +11,162 @@
 
   <main class="container">
     <section class="hero">
-      <div class="banner">
-        <button class="arrow left" id="prevBanner">‹</button>
-        <div class="banner-inner" id="bannerText">
-          <h2>EVENT</h2>
-          <h1>배너 1</h1>
-          <p>인기 마인크래프트 상품 할인</p>
+      <!-- Banner -->
+      <div class="banner card">
+        <button class="icon-btn left" id="prevBanner" aria-label="이전 배너">‹</button>
+
+        <div class="banner-content">
+          <div class="pill">EVENT</div>
+          <h1 id="bannerTitle">배너 1</h1>
+          <p class="muted" id="bannerDesc">인기 마인크래프트 상품 할인!</p>
+          <div class="banner-actions">
+            <a class="btn primary" id="bannerLink" href="./index.html">바로가기 →</a>
+            <a class="btn ghost" href="./index.html">전체 상품</a>
+            <a class="btn ghost" href="./index.html">디스코드</a>
+          </div>
+
+          <div class="dots" id="dots"></div>
         </div>
-        <button class="arrow right" id="nextBanner">›</button>
+
+        <div class="banner-image">
+          <div class="img-skeleton"></div>
+        </div>
+
+        <button class="icon-btn right" id="nextBanner" aria-label="다음 배너">›</button>
       </div>
 
-      <div class="search-card">
-        <h3>빠른 검색</h3>
-        <input placeholder="예: RPG, 서버팩" />
-        <p class="muted">상품 제목으로 검색할 수 있어</p>
+      <!-- Search -->
+      <div class="search card">
+        <div class="search-head">
+          <h3>빠른 검색</h3>
+          <span class="hint">상품 제목/태그로 빠르게 찾아봐</span>
+        </div>
+
+        <label class="input-wrap">
+          <span class="input-icon">🔎</span>
+          <input id="q" placeholder="예: 러시안룰렛, RPG, 서버팩" autocomplete="off" />
+          <button class="btn mini" id="btnClear" type="button">초기화</button>
+        </label>
+
+        <div class="chips" id="categoryChips">
+          <button class="chip active" data-cat="">전체</button>
+          <button class="chip" data-cat="미니게임">미니게임</button>
+          <button class="chip" data-cat="서버팩">서버팩</button>
+          <button class="chip" data-cat="RPG">RPG</button>
+        </div>
+
+        <div class="search-foot">
+          <div class="tip">💡 팁: 배너는 자동으로 넘어가고, 화살표로도 이동 가능해요.</div>
+        </div>
       </div>
     </section>
 
-    <section>
-      <h2>추천 판매자 리스트</h2>
-      <p class="muted">등록된 판매자가 아직 없어요.</p>
+    <section class="section">
+      <div class="section-head">
+        <h2>추천 판매자 리스트</h2>
+        <span class="muted">인증/추천 뱃지 표시</span>
+      </div>
+
+      <div class="grid sellers" id="sellers">
+        <!-- empty state -->
+        <div class="empty">
+          <strong>판매자가 아직 없어요</strong>
+          <span class="muted">관리자에서 sellers 데이터를 추가하면 여기에 보여요.</span>
+        </div>
+      </div>
     </section>
 
-    <section>
-      <h2>최고 인기 상품</h2>
-      <p class="muted">등록된 상품이 아직 없어요.</p>
+    <section class="section">
+      <div class="section-head">
+        <h2>최고 인기 상품</h2>
+        <span class="muted">published 상품만 표시</span>
+      </div>
+
+      <div class="grid products" id="products">
+        <div class="empty">
+          <strong>상품이 아직 없어요</strong>
+          <span class="muted">관리자에서 products 등록하면 여기에 보여요.</span>
+        </div>
+      </div>
     </section>
   </main>
 
-  <footer>
-    © 2025 허브 스토어 · Supabase + Static
-  </footer>
+  <footer>© 2025 허브 스토어 · Supabase + Static</footer>
 
   <script type="module">
     import { renderHeader } from "./supabase.js";
-    renderHeader();
+    await renderHeader(); // ✅ 로그인 상태에 따라 헤더 버튼 자동 변경
 
-    // 배너 슬라이드 (프론트용)
+    // ----- Banner slider -----
     const banners = [
-      { title: "배너 1", desc: "인기 상품 할인" },
-      { title: "배너 2", desc: "신규 서버팩 출시" },
-      { title: "배너 3", desc: "이벤트 진행중" }
+      { title: "배너 1", desc: "인기 마인크래프트 상품 할인!", link: "./index.html" },
+      { title: "배너 2", desc: "신규 서버팩 출시 — 지금 확인!", link: "./index.html" },
+      { title: "배너 3", desc: "RPG 콘텐츠 업데이트 기념 이벤트", link: "./index.html" },
+      { title: "배너 4", desc: "미니게임 인기 상품 모음전", link: "./index.html" },
+      { title: "배너 5", desc: "디스코드 공지/이벤트 확인하기", link: "./index.html" },
     ];
-    let idx = 0;
-    const bannerText = document.getElementById("bannerText");
 
-    function renderBanner() {
-      bannerText.innerHTML = `
-        <h2>EVENT</h2>
-        <h1>${banners[idx].title}</h1>
-        <p>${banners[idx].desc}</p>
-      `;
+    const elTitle = document.getElementById("bannerTitle");
+    const elDesc = document.getElementById("bannerDesc");
+    const elLink = document.getElementById("bannerLink");
+    const elDots = document.getElementById("dots");
+
+    let idx = 0;
+    let timer = null;
+
+    function renderDots() {
+      elDots.innerHTML = banners.map((_, i) =>
+        `<button class="dot ${i === idx ? "active" : ""}" data-i="${i}" aria-label="배너 ${i+1}"></button>`
+      ).join("");
+      elDots.querySelectorAll(".dot").forEach(b => {
+        b.onclick = () => { idx = Number(b.dataset.i); renderBanner(true); };
+      });
     }
 
-    document.getElementById("prevBanner").onclick = () => {
-      idx = (idx - 1 + banners.length) % banners.length;
-      renderBanner();
-    };
-    document.getElementById("nextBanner").onclick = () => {
-      idx = (idx + 1) % banners.length;
-      renderBanner();
-    };
+    function renderBanner(resetTimer = false) {
+      elTitle.textContent = banners[idx].title;
+      elDesc.textContent = banners[idx].desc;
+      elLink.href = banners[idx].link;
 
-    setInterval(() => {
+      renderDots();
+
+      if (resetTimer) {
+        clearInterval(timer);
+        timer = setInterval(next, 5000);
+      }
+    }
+
+    function prev() {
+      idx = (idx - 1 + banners.length) % banners.length;
+      renderBanner(true);
+    }
+    function next() {
       idx = (idx + 1) % banners.length;
-      renderBanner();
-    }, 5000);
+      renderBanner(false);
+      renderDots();
+    }
+
+    document.getElementById("prevBanner").onclick = prev;
+    document.getElementById("nextBanner").onclick = () => { idx = (idx + 1) % banners.length; renderBanner(true); };
+
+    renderBanner();
+    timer = setInterval(next, 5000);
+
+    // ----- Search UI (프론트용) -----
+    const q = document.getElementById("q");
+    const btnClear = document.getElementById("btnClear");
+    btnClear.onclick = () => { q.value = ""; q.focus(); };
+
+    const chips = document.getElementById("categoryChips");
+    let cat = "";
+    chips.querySelectorAll(".chip").forEach(btn => {
+      btn.onclick = () => {
+        chips.querySelectorAll(".chip").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        cat = btn.dataset.cat;
+        // 여기서 실제 상품 필터링 연결하면 됨 (나중에 Supabase 데이터 연결 시)
+      };
+    });
   </script>
 </body>
 </html>

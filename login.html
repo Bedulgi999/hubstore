@@ -3,34 +3,45 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>로그인</title>
+  <title>로그인 - 허브 스토어</title>
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
   <header id="header"></header>
 
   <main class="container center">
-    <div class="card">
+    <div class="card login-card">
       <h2>로그인</h2>
-      <button id="google">Google</button>
-      <button id="discord">Discord</button>
-      <button id="kakao">Kakao</button>
+      <p class="muted">원하는 방법으로 로그인해줘</p>
+
+      <div class="btn-col">
+        <button class="btn primary" id="btnGoogle">Google로 로그인</button>
+        <button class="btn" id="btnDiscord">Discord로 로그인</button>
+        <button class="btn" id="btnKakao">Kakao로 로그인</button>
+      </div>
+
+      <div class="note">
+        로그인 후 자동으로 홈으로 돌아가요.
+      </div>
     </div>
   </main>
 
   <script type="module">
     import { supabase, renderHeader } from "./supabase.js";
-    renderHeader();
+    await renderHeader();
 
+    // ✅ redirectTo는 "현재 사이트 주소 + /index.html" 로 고정
+    // 로컬: http://127.0.0.1:5500/index.html
+    // 배포: https://xxx.vercel.app/index.html
     const redirectTo = location.origin + "/index.html";
 
-    document.getElementById("google").onclick = () =>
+    document.getElementById("btnGoogle").onclick = () =>
       supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo } });
 
-    document.getElementById("discord").onclick = () =>
+    document.getElementById("btnDiscord").onclick = () =>
       supabase.auth.signInWithOAuth({ provider: "discord", options: { redirectTo } });
 
-    document.getElementById("kakao").onclick = () =>
+    document.getElementById("btnKakao").onclick = () =>
       supabase.auth.signInWithOAuth({ provider: "kakao", options: { redirectTo } });
   </script>
 </body>
