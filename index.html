@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>허브 스토어</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <!-- ✅ 헤더 마운트 -->
+  <div id="topbar"></div>
+
+  <main class="container">
+    <div class="grid">
+      <section class="card">
+        <div class="hero" id="hero"></div>
+      </section>
+
+      <aside class="card">
+        <div class="card-body">
+          <div style="font-weight:800;margin-bottom:6px">빠른 검색</div>
+          <div class="muted" style="margin-bottom:10px">상품 제목으로 검색할 수 있어</div>
+          <input class="input" placeholder="예: 러시안룰렛, RPG, 서버팩" />
+          <div class="muted" style="margin-top:10px">검색하면 아래 상품이 필터링돼</div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="section">
+      <h3>추천 판매자 리스트!</h3>
+      <div id="sellers" class="muted">불러오는 중…</div>
+    </section>
+
+    <section class="section">
+      <h3>최고 인기 상품</h3>
+      <div id="products" class="muted">불러오는 중…</div>
+    </section>
+
+    <div class="footer">© 2025 허브 스토어 · Supabase + Static</div>
+  </main>
+
+  <!-- ✅ 순서 중요 -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module" src="./supabase.js"></script>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

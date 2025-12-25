@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>상품 관리</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="topbar" id="topbar"></div>
+  <div class="container">
+    <div class="row" style="justify-content:space-between;align-items:center;">
+      <div class="h2" style="margin:0;">상품 관리</div>
+      <a class="btn" href="/admin.html">← 관리자</a>
+    </div>
+
+    <div class="card p16" style="margin-top:12px;">
+      <div style="font-weight:900;">상품 추가</div>
+
+      <div class="grid" style="grid-template-columns:1fr; margin-top:10px;">
+        <select class="input" id="seller_id"></select>
+        <input class="input" id="title" placeholder="제목" />
+        <input class="input" id="summary" placeholder="요약(선택)" />
+        <textarea class="input" id="description" placeholder="설명(선택)"></textarea>
+        <input class="input" id="price_krw" type="number" placeholder="가격(원)" value="0" />
+        <input class="input" id="version_tag" placeholder="버전 태그(예: 1.21.1)" />
+        <input class="input" id="type_tag" placeholder="타입 태그(예: 미니게임)" />
+        <label class="row" style="align-items:center;">
+          <input type="checkbox" id="is_published" />
+          <span class="kv">바로 공개</span>
+        </label>
+        <input class="input" id="thumb" type="file" accept="image/*" />
+        <button class="btn primary" id="create">등록</button>
+        <div class="kv">* sellers가 최소 1개 있어야 등록 가능 (RLS 정책)</div>
+      </div>
+    </div>
+
+    <div class="h2">목록</div>
+    <div class="grid" id="list"></div>
+  </div>
+
+  <script type="module" src="/supabase.js"></script>
+  <script type="module" src="/common.js"></script>
+  <script type="module">
+    await window.requireAdmin();
+    const sb = window.supabase;
+
+    async function loadSellers() {
+      const { data, error } = await sb.from("sellers").select("*").order("created_at", { ascending:false });
+      if (error) return alert(error.message);
+      const sellers = data ?? [];
+      window.el("seller_id").innerHTML = sellers.length
+        ? sellers.map(s => `<option value="${s.id}">${window.escapeHtml(s.name)}</option>`).join("")
+        : `<option value="">판매자 없음(sellers 생성 필요)</option>`;
+    }
+
+    async function refresh() {
+      const { data, error } = await sb.from("products").select("*").order("created_at", { ascending:false }).limit(200);
+      if (error) return alert(error.message);
+
+      const list = data ?? [];
+      window.el("list").innerHTML = list.length ? list.map(p => `
+        <div class="card p16" style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+          <div>
+            <div style="font-weight:900">${window.escapeHtml(p.title)}</div>
+            <div class="kv">${Number(p.price_krw).toLocaleString()}원</div>
+            <div class="kv">공개: ${String(p.is_published)}</div>
+          </div>
+          <div class="row">
+            <a class="btn" href="/product.html?id=${p.id}">보기</a>
+            <button class="btn" data-p="${p.id}" data-next="${p.is_published ? "0":"1"}">${p.is_published ? "비공개" : "공개"}</button>
+            <button class="btn danger" data-d="${p.id}">삭제</button>
+          </div>
+        </div>
+      `).join("") : `<div class="kv">상품 없음</div>`;
+
+      document.querySelectorAll("[data-p]").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const id = btn.getAttribute("data-p");
+          const next = btn.getAttribute("data-next") === "1";
+          const { error } = await sb.from("products").update({ is_published: next }).eq("id", id);
+          if (error) return alert(error.message);
+          refresh();
+        });
+      });
+
+      document.querySelectorAll("[data-d]").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const id = btn.getAttribute("data-d");
+          if (!confirm("삭제할까?")) return;
+          const { error } = await sb.from("products").delete().eq("id", id);
+          if (error) return alert(error.message);
+          refresh();
+        });
+      });
+    }
+
+    window.el("create").addEventListener("click", async () => {
+      const seller_id = window.el("seller_id").value;
+      const title = window.el("title").value.trim();
+      const summary = window.el("summary").value.trim() || null;
+      const description = window.el("description").value.trim() || null;
+      const price_krw = Number(window.el("price_krw").value || 0);
+      const version_tag = window.el("version_tag").value.trim() || null;
+      const type_tag = window.el("type_tag").value.trim() || null;
+      const is_published = window.el("is_published").checked;
+      const file = window.el("thumb").files?.[0] || null;
+
+      if (!seller_id) return alert("판매자(sellers)가 필요해");
+      if (!title) return alert("제목이 필요해");
+
+      try {
+        let thumbnail_url = null;
+        if (file) thumbnail_url = await window.uploadImage(file, "products");
+
+        const { error } = await sb.from("products").insert({
+          seller_id, title, summary, description, price_krw,
+          version_tag, type_tag, is_published, thumbnail_url
+        });
+        if (error) throw error;
+
+        alert("등록 완료");
+        ["title","summary","description","version_tag","type_tag"].forEach(id => window.el(id).value = "");
+        window.el("price_krw").value = "0";
+        window.el("is_published").checked = false;
+        window.el("thumb").value = "";
+        refresh();
+      } catch (e) {
+        alert(e?.message || String(e));
+      }
+    });
+
+    await loadSellers();
+    await refresh();
+  </script>
+  <link rel="stylesheet" href="./styles.css" />
+
+<script type="module" src="./supabase.js"></script>
+<script type="module" src="./common.js"></script>
+
+</body>
+</html>

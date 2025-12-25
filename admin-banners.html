@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>배너 관리</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="topbar" id="topbar"></div>
+  <div class="container">
+    <div class="row" style="justify-content:space-between;align-items:center;">
+      <div class="h2" style="margin:0;">배너 관리</div>
+      <a class="btn" href="/admin.html">← 관리자</a>
+    </div>
+
+    <div class="card p16" style="margin-top:12px;">
+      <div style="font-weight:900;">배너 추가</div>
+
+      <div class="grid" style="grid-template-columns:1fr; margin-top:10px;">
+        <input class="input" id="title" placeholder="제목" />
+        <input class="input" id="subtitle" placeholder="부제목" />
+        <input class="input" id="link_url" placeholder="링크 URL (기본 /)" value="/" />
+        <input class="input" id="sort_order" type="number" placeholder="정렬 순서" value="1" />
+        <label class="row" style="align-items:center;">
+          <input type="checkbox" id="is_active" checked />
+          <span class="kv">활성화</span>
+        </label>
+        <input class="input" id="img" type="file" accept="image/*" />
+        <button class="btn primary" id="create">생성</button>
+        <div class="kv">* Storage 버킷 public-images 필요</div>
+      </div>
+    </div>
+
+    <div class="h2">목록</div>
+    <div class="grid" id="list"></div>
+  </div>
+
+  <script type="module" src="/supabase.js"></script>
+  <script type="module" src="/common.js"></script>
+  <script type="module">
+    await window.requireAdmin();
+    const sb = window.supabase;
+
+    async function refresh() {
+      const { data, error } = await sb.from("banners").select("*").order("sort_order", { ascending:true });
+      if (error) return alert(error.message);
+      const list = data ?? [];
+
+      window.el("list").innerHTML = list.length ? list.map(b => `
+        <div class="card">
+          <div class="banner-img">${b.image_url ? `<img src="${b.image_url}">` : ""}</div>
+          <div class="p16" style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+            <div>
+              <div style="font-weight:900">${window.escapeHtml(b.title || "")}</div>
+              <div class="kv">${window.escapeHtml(b.subtitle || "")}</div>
+              <div class="kv">active: ${String(b.is_active)} / sort: ${b.sort_order}</div>
+            </div>
+            <div class="row">
+              <button class="btn" data-t="${b.id}" data-a="${b.is_active ? "0":"1"}">${b.is_active ? "비활성" : "활성"}</button>
+              <button class="btn danger" data-d="${b.id}">삭제</button>
+            </div>
+          </div>
+        </div>
+      `).join("") : `<div class="kv">배너 없음</div>`;
+
+      // bind
+      document.querySelectorAll("[data-t]").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const id = btn.getAttribute("data-t");
+          const next = btn.getAttribute("data-a") === "1";
+          const { error } = await sb.from("banners").update({ is_active: next }).eq("id", id);
+          if (error) return alert(error.message);
+          refresh();
+        });
+      });
+
+      document.querySelectorAll("[data-d]").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const id = btn.getAttribute("data-d");
+          if (!confirm("삭제할까?")) return;
+          const { error } = await sb.from("banners").delete().eq("id", id);
+          if (error) return alert(error.message);
+          refresh();
+        });
+      });
+    }
+
+    window.el("create").addEventListener("click", async () => {
+      const title = window.el("title").value.trim();
+      const subtitle = window.el("subtitle").value.trim();
+      const link_url = window.el("link_url").value.trim() || "/";
+      const sort_order = Number(window.el("sort_order").value || 1);
+      const is_active = window.el("is_active").checked;
+      const file = window.el("img").files?.[0];
+
+      if (!title || !file) return alert("제목 + 이미지가 필요해");
+
+      try {
+        const image_url = await window.uploadImage(file, "banners");
+        const { error } = await sb.from("banners").insert({ title, subtitle, link_url, sort_order, is_active, image_url });
+        if (error) throw error;
+        alert("생성 완료");
+        window.el("title").value = "";
+        window.el("subtitle").value = "";
+        window.el("img").value = "";
+        refresh();
+      } catch (e) {
+        alert(e?.message || String(e));
+      }
+    });
+
+    refresh();
+  </script>
+  <link rel="stylesheet" href="./styles.css" />
+
+<script type="module" src="./supabase.js"></script>
+<script type="module" src="./common.js"></script>
+
+</body>
+</html>

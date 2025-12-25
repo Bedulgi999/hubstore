@@ -1,0 +1,33 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>결제</title><link rel="stylesheet" href="/styles.css"/></head>
+<body>
+<div class="topbar" id="topbar"></div>
+<div class="container" style="max-width:600px;">
+  <a class="kv" href="/index.html">← 홈</a>
+  <div class="card p16" style="margin-top:10px;">
+    <div style="font-size:20px;font-weight:900" id="t">결제하기</div>
+    <div class="kv">결제 연동 전: UI만</div>
+
+    <div class="grid" style="grid-template-columns:1fr 1fr; margin-top:12px;">
+      <button class="btn">toss pay</button><button class="btn">kpay</button>
+      <button class="btn">npay</button><button class="btn">samsung pay</button>
+      <button class="btn" style="grid-column:span 2;">신용/체크카드</button>
+    </div>
+    <button class="btn primary" style="width:100%; margin-top:12px;">결제하기</button>
+  </div>
+</div>
+<script type="module" src="/supabase.js"></script>
+<script type="module" src="/common.js"></script>
+<script type="module">
+  const sb = window.supabase;
+  const id = window.q("id");
+  const { data } = await sb.from("products").select("title").eq("id", id).single();
+  if (data?.title) window.el("t").textContent = `${data.title} 결제하기`;
+</script>
+<link rel="stylesheet" href="./styles.css" />
+
+<script type="module" src="./supabase.js"></script>
+<script type="module" src="./common.js"></script>
+
+</body></html>

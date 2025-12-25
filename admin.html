@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>관리자 - 허브 스토어</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <div id="topbar"></div>
+
+  <main class="container">
+    <section class="section">
+      <h2 class="sectionTitle">관리자</h2>
+      <p class="muted">관리자만 접근 가능 (profiles.is_admin=true)</p>
+    </section>
+
+    <div class="gridTop">
+      <section class="card search">
+        <h3>카테고리 추가</h3>
+        <p>index의 필터 버튼에 자동 반영돼</p>
+        <input class="input" id="catName" placeholder="카테고리 이름" />
+        <input class="input" id="catOrder" placeholder="정렬(sort_order) 숫자 (예: 10)" style="margin-top:10px" />
+        <div class="row">
+          <button class="chip primary" id="addCatBtn">추가</button>
+        </div>
+        <p class="muted" id="catMsg"></p>
+      </section>
+
+      <section class="card search">
+        <h3>배너 추가</h3>
+        <p>이미지 URL로 빠르게 추가 (Storage 업로드는 다음 단계에서)</p>
+        <input class="input" id="bTitle" placeholder="제목" />
+        <input class="input" id="bSub" placeholder="부제목" style="margin-top:10px" />
+        <input class="input" id="bImg" placeholder="image_url (https://...)" style="margin-top:10px" />
+        <input class="input" id="bLink" placeholder="link_url (선택)" style="margin-top:10px" />
+        <input class="input" id="bOrder" placeholder="정렬(sort_order) 숫자 (예: 1)" style="margin-top:10px" />
+        <label class="muted" style="display:flex;gap:10px;align-items:center;margin-top:10px;">
+          <input type="checkbox" id="bActive" checked />
+          활성화(is_active)
+        </label>
+        <div class="row">
+          <button class="chip primary" id="addBannerBtn">추가</button>
+        </div>
+        <p class="muted" id="bannerMsg"></p>
+      </section>
+    </div>
+
+    <section class="section">
+      <h2 class="sectionTitle">현재 카테고리</h2>
+      <div class="cards" id="catGrid"></div>
+    </section>
+
+    <section class="section">
+      <h2 class="sectionTitle">현재 배너(활성/비활성 포함)</h2>
+      <div class="cards" id="bannerGrid"></div>
+    </section>
+
+    <div class="footer">관리자 페이지</div>
+  </main>
+
+  <script type="module" src="./supabase.js"></script>
+  <script type="module" src="./api.js"></script>
+  <script type="module" src="./admin.js"></script>
+</body>
+</html>
