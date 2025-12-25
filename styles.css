@@ -380,13 +380,158 @@ footer{
   transform: translateY(0px) scale(0.99);
   filter: brightness(0.99);
 }
-/* sticky + blur 환경에서 hover 깜빡임 줄이기 */
-.header {
-  transform: translateZ(0);
+/* =========================
+   버튼 퀄리티 업그레이드
+   ========================= */
+
+/* 공통 버튼 베이스 */
+.btn,
+.nav-pill,
+.chip,
+.icon-btn {
+  position: relative;
+  overflow: hidden;
+  transition:
+    background-color .18s ease,
+    transform .14s ease,
+    filter .14s ease,
+    box-shadow .18s ease;
+  will-change: transform;
 }
 
-/* 투명/블러 요소 hover 시 배경 변화 최소화 */
+/* 버튼 내부 하이라이트(은은한 광택) */
+.btn::after,
+.nav-pill::after,
+.chip::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    rgba(255,255,255,.35),
+    rgba(255,255,255,0) 40%
+  );
+  opacity: .25;
+  pointer-events: none;
+}
+
+/* 기본 버튼 */
+.btn,
 .nav-pill,
-.icon-btn {
+.chip {
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,.95),
+    rgba(245,246,255,.95)
+  );
+  box-shadow:
+    0 4px 12px rgba(20,22,30,.06),
+    inset 0 1px 0 rgba(255,255,255,.6);
+}
+
+/* primary 버튼 (로그인, 바로가기 등) */
+.btn.primary,
+.nav-pill.primary {
+  color: #fff;
+  background: linear-gradient(
+    135deg,
+    var(--brand),
+    var(--brand2)
+  );
+  box-shadow:
+    0 10px 24px rgba(109,94,252,.28),
+    inset 0 1px 0 rgba(255,255,255,.35);
+}
+
+/* ghost 버튼 */
+.btn.ghost,
+.nav-pill.ghost {
+  background: rgba(255,255,255,.55);
   backdrop-filter: blur(10px);
+  box-shadow:
+    0 4px 12px rgba(20,22,30,.05),
+    inset 0 1px 0 rgba(255,255,255,.5);
+}
+
+/* =========================
+   Hover 상태 (절대 깜빡이지 않음)
+   ========================= */
+.btn:hover,
+.nav-pill:hover,
+.chip:hover,
+.icon-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.04);
+  box-shadow:
+    0 8px 20px rgba(20,22,30,.12),
+    inset 0 1px 0 rgba(255,255,255,.65);
+}
+
+/* primary hover */
+.btn.primary:hover,
+.nav-pill.primary:hover {
+  filter: brightness(1.06);
+  box-shadow:
+    0 14px 30px rgba(109,94,252,.35),
+    inset 0 1px 0 rgba(255,255,255,.4);
+}
+
+/* =========================
+   Active (눌림)
+   ========================= */
+.btn:active,
+.nav-pill:active,
+.nav-profile:active,
+.chip:active,
+.icon-btn:active {
+  transform: translateY(0) scale(0.98);
+  filter: brightness(0.98);
+  box-shadow:
+    0 4px 10px rgba(20,22,30,.08),
+    inset 0 2px 6px rgba(0,0,0,.12);
+}
+
+/* =========================
+   프로필 버튼 전용 업그레이드
+   ========================= */
+.nav-profile {
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,.75),
+    rgba(240,242,255,.75)
+  );
+  backdrop-filter: blur(14px);
+  box-shadow:
+    0 8px 20px rgba(109,94,252,.18),
+    inset 0 1px 0 rgba(255,255,255,.6);
+}
+
+/* 프로필 hover */
+.nav-profile:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.04);
+  box-shadow:
+    0 12px 26px rgba(109,94,252,.26),
+    inset 0 1px 0 rgba(255,255,255,.65);
+}
+
+/* =========================
+   아이콘 버튼 (배너 화살표)
+   ========================= */
+.icon-btn {
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,.85),
+    rgba(240,242,255,.85)
+  );
+  box-shadow:
+    0 6px 14px rgba(20,22,30,.12),
+    inset 0 1px 0 rgba(255,255,255,.6);
+}
+
+.icon-btn:hover {
+  filter: brightness(1.08);
+  box-shadow:
+    0 10px 22px rgba(20,22,30,.18),
+    inset 0 1px 0 rgba(255,255,255,.7);
 }
