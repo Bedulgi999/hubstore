@@ -289,6 +289,14 @@
 
     renderSellers(await loadSellers());
     renderProducts(await loadProducts({ q: "", category: "전체" }));
+
+    import { supabase } from "/supabase.js";
+
+supabase.auth.onAuthStateChange(() => {
+  // 로그인/로그아웃/토큰갱신 때마다 헤더 다시 그리기
+  if (window.renderHeader) window.renderHeader();
+});
+
   </script>
 </body>
 </html>
