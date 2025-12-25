@@ -2,61 +2,36 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>로그인 - 허브 스토어</title>
-  <link rel="stylesheet" href="/styles.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>로그인</title>
+  <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
-  <div id="header"></div>
+  <header id="header"></header>
 
-  <main class="page">
-    <div class="container">
-      <div class="card pad" style="max-width:520px;margin:40px auto;">
-        <h2 style="margin:0 0 10px;">로그인</h2>
-        <p class="muted" style="margin:0 0 14px;">원하는 방법으로 로그인해줘</p>
-
-        <div class="row" style="display:flex;flex-direction:column;gap:10px;">
-          <button class="btn primary" id="btnGoogle">Google로 로그인</button>
-          <button class="btn" id="btnDiscord">Discord로 로그인</button>
-          <button class="btn" id="btnKakao">Kakao로 로그인</button>
-        </div>
-
-        <div class="hr"></div>
-        <div class="notice">
-          로그인 후 자동으로 홈으로 돌아가요.
-          <div class="muted" style="margin-top:8px;font-size:12px;">문제 시 F12 → Console 확인</div>
-        </div>
-      </div>
+  <main class="container center">
+    <div class="card">
+      <h2>로그인</h2>
+      <button id="google">Google</button>
+      <button id="discord">Discord</button>
+      <button id="kakao">Kakao</button>
     </div>
   </main>
 
   <script type="module">
-    import { renderHeader, enableHeaderAutoRefresh } from "/header.js";
-    import { supabase, getUser } from "/supabase.js";
+    import { supabase, renderHeader } from "./supabase.js";
+    renderHeader();
 
-    await renderHeader();
-    enableHeaderAutoRefresh();
+    const redirectTo = location.origin + "/index.html";
 
-    const redirectTo = `${location.origin}/auth.html`;
+    document.getElementById("google").onclick = () =>
+      supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo } });
 
-    async function oauth(provider) {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider,
-        options: { redirectTo },
-      });
-      if (error) {
-        console.error(error);
-        alert("로그인 시작 실패: " + error.message);
-      }
-    }
+    document.getElementById("discord").onclick = () =>
+      supabase.auth.signInWithOAuth({ provider: "discord", options: { redirectTo } });
 
-    document.getElementById("btnGoogle").onclick = () => oauth("google");
-    document.getElementById("btnDiscord").onclick = () => oauth("discord");
-    document.getElementById("btnKakao").onclick = () => oauth("kakao");
-
-    // 이미 로그인 상태면 홈
-    const u = await getUser({ force: true });
-    if (u) location.href = "/index.html";
+    document.getElementById("kakao").onclick = () =>
+      supabase.auth.signInWithOAuth({ provider: "kakao", options: { redirectTo } });
   </script>
 </body>
 </html>
