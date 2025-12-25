@@ -380,3 +380,13 @@ footer{
   transform: translateY(0px) scale(0.99);
   filter: brightness(0.99);
 }
+/* sticky + blur 환경에서 hover 깜빡임 줄이기 */
+.header {
+  transform: translateZ(0);
+}
+
+/* 투명/블러 요소 hover 시 배경 변화 최소화 */
+.nav-pill,
+.icon-btn {
+  backdrop-filter: blur(10px);
+}
