@@ -3,34 +3,98 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>프로필 - 허브 스토어</title>
-  <link rel="stylesheet" href="/styles.css" />
+  <title>내 프로필 - 허브 스토어</title>
+  <link rel="stylesheet" href="./styles.css" />
 </head>
+
 <body>
   <div id="header"></div>
 
-  <main class="page">
-    <div class="container">
-      <div class="card pad">
-        <h2 style="margin:0 0 10px;">프로필</h2>
-        <div class="muted" id="email">불러오는 중...</div>
-        <div class="hr"></div>
-        <div class="notice">여기서 나중에 구매내역/판매자 신청 같은 걸 넣으면 돼.</div>
+  <main class="container">
+    <!-- 상단 요약 카드 -->
+    <section class="card profile-hero">
+      <div class="profile-hero-left">
+        <div class="p-ava" id="heroAvatar">
+          <span class="p-ava-txt" id="heroAvatarTxt">U</span>
+          <img class="p-ava-img" id="heroAvatarImg" alt="avatar" />
+        </div>
+
+        <div class="p-meta">
+          <div class="p-title">내 프로필</div>
+          <div class="p-sub">이름/프로필 이미지 변경 + 포인트/출석</div>
+          <div class="p-uuid" id="uuidText"></div>
+        </div>
       </div>
-    </div>
+
+      <div class="profile-hero-actions">
+        <button class="btn ghost" id="btnRefreshPoints" type="button">포인트 새로고침</button>
+        <button class="btn primary" id="btnCheckin" type="button">출석 보상 받기</button>
+      </div>
+    </section>
+
+    <!-- 본문 2컬럼 -->
+    <section class="profile-grid">
+      <!-- 왼쪽: 설정 -->
+      <div class="card profile-card">
+        <div class="profile-card-head">
+          <h3>프로필 설정</h3>
+          <span class="muted">저장하면 헤더에 즉시 반영</span>
+        </div>
+
+        <div class="form">
+          <label class="field">
+            <div class="label">표시 이름</div>
+            <input id="displayName" class="input" placeholder="예: 비둘기" />
+          </label>
+
+          <div class="row">
+            <button class="btn primary" id="btnSaveName" type="button">이름 저장</button>
+            <span class="muted" id="saveHint"></span>
+          </div>
+
+          <div class="hr"></div>
+
+          <label class="field">
+            <div class="label">프로필 이미지 파일</div>
+
+            <div class="filebox">
+              <input id="avatarFile" type="file" accept="image/*" />
+              <div class="filebox-right">
+                <button class="btn" id="btnUploadAvatar" type="button">이미지 업로드</button>
+              </div>
+            </div>
+
+            <div class="muted small">팁: 정사각형 이미지(예: 512×512)가 가장 예쁘게 보여.</div>
+          </label>
+        </div>
+      </div>
+
+      <!-- 오른쪽: 포인트 -->
+      <div class="card profile-card">
+        <div class="profile-card-head">
+          <h3>포인트</h3>
+          <div class="p-balance">
+            <span class="muted">보유</span>
+            <strong id="pointsValue">0</strong><span class="muted">P</span>
+          </div>
+        </div>
+
+        <div class="p-log-head">
+          <div>
+            <div class="p-log-title">최근 내역 (20개)</div>
+            <div class="muted small">실시간 반영</div>
+          </div>
+        </div>
+
+        <div class="p-log" id="pointsLog">
+          <div class="muted">포인트 내역을 불러오는 중...</div>
+        </div>
+      </div>
+    </section>
+
+    <footer>© 2025 허브 스토어</footer>
   </main>
 
-  <script type="module">
-    import { renderHeader, enableHeaderAutoRefresh } from "/header.js";
-    import { getUser } from "/supabase.js";
-
-    await renderHeader();
-    enableHeaderAutoRefresh();
-
-    const user = await getUser({ force: true });
-    if (!user) location.href = "/login.html";
-
-    document.getElementById("email").textContent = user.email || user.id;
-  </script>
+  <script type="module" src="./profile.js"></script>
 </body>
 </html>

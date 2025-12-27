@@ -1,52 +1,51 @@
 // supabase.js
+export const SUPABASE_URL = "https://xfbeqkuaxirgubdvczmo.supabase.co";
+export const SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhmYmVxa3VheGlyZ3ViZHZjem1vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY2NjQxMjAsImV4cCI6MjA4MjI0MDEyMH0.KQpw28WJE1QWO6jfv_nzkNhVg1xCLuNv66xBRHefpA4";
+
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-export const SUPABASE_URL = "https://xfbeqkuaxirgubdvczmo.supabase.co";
-export const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhmYmVxa3VheGlyZ3ViZHZjem1vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjY2NjQxMjAsImV4cCI6MjA4MjI0MDEyMH0.KQpw28WJE1QWO6jfv_nzkNhVg1xCLuNv66xBRHefpA4";
+export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true,
-  },
-});
-
-let _authListenerBound = false;
-
-/* ===== 사용자 ===== */
+// ===== Auth helpers =====
 export async function getUser() {
-  const { data } = await supabase.auth.getUser();
+  const { data, error } = await supabase.auth.getUser();
+  if (error) return null;
   return data?.user ?? null;
 }
 
-/* ===== 관리자 여부 (header.js에서 필요) ===== */
-export async function isAdmin() {
+export async function getSession() {
+  const { data } = await supabase.auth.getSession();
+  return data?.session ?? null;
+}
+
+// ===== Profile helpers (profiles 테이블 기준) =====
+// profiles: id(uuid, pk), display_name(text), avatar_url(text), is_admin(bool), is_seller(bool)
+export async function getMyProfile() {
   const user = await getUser();
-  if (!user) return false;
+  if (!user) return null;
 
   const { data, error } = await supabase
     .from("profiles")
-    .select("is_admin")
+    .select("id, display_name, avatar_url, is_admin, is_seller")
     .eq("id", user.id)
-    .single();
+    .maybeSingle();
 
-  if (error) return false;
-  return !!data?.is_admin;
+  if (error) return null;
+  return data ?? null;
 }
 
-/* ===== 로그아웃 ===== */
+export async function isAdmin() {
+  const p = await getMyProfile();
+  return !!p?.is_admin;
+}
+
+export async function isSeller() {
+  const p = await getMyProfile();
+  return !!p?.is_seller;
+}
+
 export async function signOut() {
   await supabase.auth.signOut();
   location.href = "/index.html";
-}
-
-/* ===== auth 상태 변화 리스너 (딱 1번만) ===== */
-export function bindAuthListenerOnce(callback) {
-  if (_authListenerBound) return;
-  _authListenerBound = true;
-
-  supabase.auth.onAuthStateChange(() => {
-    callback();
-  });
 }

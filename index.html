@@ -2,167 +2,63 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>허브 스토어</title>
   <link rel="stylesheet" href="./styles.css" />
 </head>
+
 <body>
-  <header id="header"></header>
+  <div id="header"></div>
 
   <main class="container">
     <section class="hero">
-      <!-- Banner -->
-      <div class="banner card">
-        <button class="icon-btn left" id="prevBanner" aria-label="이전 배너">‹</button>
+      <div class="card banner" id="bannerCard" title="클릭하면 판매자 프로필로 이동">
+        <div class="banner-bg" id="bannerBg"></div>
+
+        <button class="icon-btn left" id="prevBtn" type="button" aria-label="prev">‹</button>
+        <button class="icon-btn right" id="nextBtn" type="button" aria-label="next">›</button>
 
         <div class="banner-content">
-          <div class="pill">EVENT</div>
-          <h1 id="bannerTitle">배너 1</h1>
-          <p class="muted" id="bannerDesc">인기 마인크래프트 상품 할인!</p>
-          <div class="banner-actions">
-            <a class="btn primary" id="bannerLink" href="./index.html">바로가기 →</a>
-            <a class="btn ghost" href="./index.html">전체 상품</a>
-            <a class="btn ghost" href="./index.html">디스코드</a>
-          </div>
-
-          <div class="dots" id="dots"></div>
+          <span class="pill">EVENT</span>
+          <h1 id="bannerTitle">배너 로딩중...</h1>
+          <p id="bannerDesc">잠시만 기다려줘</p>
+          <div class="dots" id="bannerDots"></div>
         </div>
-
-        <div class="banner-image">
-          <div class="img-skeleton"></div>
-        </div>
-
-        <button class="icon-btn right" id="nextBanner" aria-label="다음 배너">›</button>
       </div>
 
-      <!-- Search -->
-      <div class="search card">
-        <div class="search-head">
-          <h3>빠른 검색</h3>
-          <span class="hint">상품 제목/태그로 빠르게 찾아봐</span>
+      <div class="card search">
+        <h3>검색</h3>
+        <div class="hint">상품 제목 검색 + 카테고리 필터</div>
+
+        <div class="input-wrap">
+          <span style="opacity:.75">🔎</span>
+          <input id="searchInput" placeholder="예: 스폰, RPG, 미니게임" />
         </div>
 
-        <label class="input-wrap">
-          <span class="input-icon">🔎</span>
-          <input id="q" placeholder="예: 러시안룰렛, RPG, 서버팩" autocomplete="off" />
-          <button class="btn mini" id="btnClear" type="button">초기화</button>
-        </label>
-
-        <div class="chips" id="categoryChips">
-          <button class="chip active" data-cat="">전체</button>
-          <button class="chip" data-cat="미니게임">미니게임</button>
-          <button class="chip" data-cat="서버팩">서버팩</button>
-          <button class="chip" data-cat="RPG">RPG</button>
-        </div>
-
-        <div class="search-foot">
-          <div class="tip">💡 팁: 배너는 자동으로 넘어가고, 화살표로도 이동 가능해요.</div>
-        </div>
+        <div class="hint">카테고리</div>
+        <div class="chips" id="chips"></div>
       </div>
     </section>
 
     <section class="section">
       <div class="section-head">
-        <h2>추천 판매자 리스트</h2>
-        <span class="muted">인증/추천 뱃지 표시</span>
+        <h2>추천 판매자</h2>
+        <span class="muted">프로필 사진 클릭 → 판매자 페이지</span>
       </div>
-
-      <div class="grid sellers" id="sellers">
-        <div class="empty">
-          <strong>판매자가 아직 없어요</strong>
-          <span class="muted">관리자에서 sellers 데이터를 추가하면 여기에 보여요.</span>
-        </div>
-      </div>
+      <div id="sellerList" class="seller-avatars"></div>
     </section>
 
     <section class="section">
       <div class="section-head">
-        <h2>최고 인기 상품</h2>
-        <span class="muted">published 상품만 표시</span>
+        <h2>최신 상품</h2>
+        <span class="muted">판매자가 등록한 상품</span>
       </div>
-
-      <div class="grid products" id="products">
-        <div class="empty">
-          <strong>상품이 아직 없어요</strong>
-          <span class="muted">관리자에서 products 등록하면 여기에 보여요.</span>
-        </div>
-      </div>
+      <div id="products" class="grid products"></div>
     </section>
+
+    <footer>© 2025 허브 스토어</footer>
   </main>
 
-  <footer>© 2025 허브 스토어 · Supabase + Static</footer>
-
-  <script type="module">
-    import { renderHeader } from "./supabase.js";
-    await renderHeader();
-
-    // ----- Banner slider -----
-    const banners = [
-      { title: "배너 1", desc: "인기 마인크래프트 상품 할인!", link: "./index.html" },
-      { title: "배너 2", desc: "신규 서버팩 출시 — 지금 확인!", link: "./index.html" },
-      { title: "배너 3", desc: "RPG 콘텐츠 업데이트 기념 이벤트", link: "./index.html" },
-      { title: "배너 4", desc: "미니게임 인기 상품 모음전", link: "./index.html" },
-      { title: "배너 5", desc: "디스코드 공지/이벤트 확인하기", link: "./index.html" },
-    ];
-
-    const elTitle = document.getElementById("bannerTitle");
-    const elDesc = document.getElementById("bannerDesc");
-    const elLink = document.getElementById("bannerLink");
-    const elDots = document.getElementById("dots");
-
-    let idx = 0;
-    let timer = null;
-
-    function renderDots() {
-      elDots.innerHTML = banners.map((_, i) =>
-        `<button class="dot ${i === idx ? "active" : ""}" data-i="${i}" aria-label="배너 ${i+1}"></button>`
-      ).join("");
-      elDots.querySelectorAll(".dot").forEach(b => {
-        b.onclick = () => { idx = Number(b.dataset.i); renderBanner(true); };
-      });
-    }
-
-    function renderBanner(resetTimer = false) {
-      elTitle.textContent = banners[idx].title;
-      elDesc.textContent = banners[idx].desc;
-      elLink.href = banners[idx].link;
-
-      renderDots();
-
-      if (resetTimer) {
-        clearInterval(timer);
-        timer = setInterval(next, 5000);
-      }
-    }
-
-    function prev() {
-      idx = (idx - 1 + banners.length) % banners.length;
-      renderBanner(true);
-    }
-    function next() {
-      idx = (idx + 1) % banners.length;
-      renderBanner(false);
-      renderDots();
-    }
-
-    document.getElementById("prevBanner").onclick = prev;
-    document.getElementById("nextBanner").onclick = () => { idx = (idx + 1) % banners.length; renderBanner(true); };
-
-    renderBanner();
-    timer = setInterval(next, 5000);
-
-    // ----- Search UI -----
-    const q = document.getElementById("q");
-    const btnClear = document.getElementById("btnClear");
-    btnClear.onclick = () => { q.value = ""; q.focus(); };
-
-    const chips = document.getElementById("categoryChips");
-    chips.querySelectorAll(".chip").forEach(btn => {
-      btn.onclick = () => {
-        chips.querySelectorAll(".chip").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-      };
-    });
-  </script>
+  <script type="module" src="./index.js"></script>
 </body>
 </html>

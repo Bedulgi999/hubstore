@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>판매자 대시보드 - 허브 스토어</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div id="header"></div>
+<script type="module" src="./header.js"></script>
+  <main class="container">
+    <div class="card" style="padding:18px;">
+      <div class="section-head">
+        <h2>판매자 대시보드</h2>
+        <span class="muted">프로필/상품 관리</span>
+      </div>
+
+      <div class="hr"></div>
+
+      <h3 style="margin:0 0 10px;">판매자 프로필</h3>
+
+      <div class="row" style="align-items:flex-start;">
+        <div style="flex:1;min-width:260px;">
+          <div class="form">
+            <div class="field">
+              <label>판매자 이름</label>
+              <input id="sellerName" placeholder="예: 허브상점">
+            </div>
+            <div class="field">
+              <label>소개(bio)</label>
+              <textarea id="sellerBio" placeholder="예: 신뢰할 수 있는 거래, 빠른 응답!"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div style="width:320px;min-width:260px;">
+          <div class="card" style="padding:12px;">
+            <div class="field">
+              <label>아바타 이미지</label>
+              <input id="sellerAvatarFile" type="file" accept="image/*">
+              <button class="btn small" id="btnUploadSellerAvatar" type="button">아바타 업로드</button>
+            </div>
+            <div class="field">
+              <label>커버 이미지</label>
+              <input id="sellerCoverFile" type="file" accept="image/*">
+              <button class="btn small" id="btnUploadSellerCover" type="button">커버 업로드</button>
+            </div>
+            <div class="row">
+              <button class="btn primary" id="btnSaveSeller" type="button">저장</button>
+              <span class="muted" id="sellerMsg" style="font-weight:800;"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <h3 style="margin:0 0 10px;">상품 등록</h3>
+      <div class="form">
+        <div class="row">
+          <div class="field" style="flex:1;min-width:200px;">
+            <label>제목</label>
+            <input id="pTitle" placeholder="예: VIP 스폰">
+          </div>
+          <div class="field" style="width:160px;min-width:140px;">
+            <label>가격</label>
+            <input id="pPrice" type="number" value="0">
+          </div>
+          <div class="field" style="width:200px;min-width:160px;">
+            <label>카테고리</label>
+            <input id="pCategory" placeholder="예: RPG">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>설명</label>
+          <textarea id="pDesc" placeholder="상품 설명"></textarea>
+        </div>
+
+        <div class="field">
+          <label>상품 이미지</label>
+          <input id="pFile" type="file" accept="image/*">
+        </div>
+
+        <div class="row">
+          <button class="btn primary" id="btnAddProduct" type="button">등록</button>
+          <span class="muted" id="pMsg" style="font-weight:800;"></span>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <h3 style="margin:0 0 10px;">내 상품</h3>
+      <div style="overflow:auto;">
+        <table class="table" id="myProducts"></table>
+      </div>
+    </div>
+  </main>
+
+  <script type="module" src="./seller_dashboard.js"></script>
+</body>
+</html>

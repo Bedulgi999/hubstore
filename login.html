@@ -2,42 +2,29 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>로그인 - 허브 스토어</title>
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
-  <header id="header"></header>
+  <div id="header"></div>
 
-  <main class="container center">
-    <div class="card login-card">
-      <h2>로그인</h2>
-      <p class="muted">원하는 방법으로 로그인해줘</p>
+  <main class="container">
+    <div class="card" style="max-width:520px;margin:30px auto;padding:18px;">
+      <h2 style="margin:0 0 10px;">로그인</h2>
+      <div class="muted" style="font-weight:800;margin-bottom:14px;">원하는 방법으로 로그인해줘</div>
 
-      <div class="btn-col">
-        <button class="btn primary" id="btnGoogle">Google로 로그인</button>
-        <button class="btn" id="btnDiscord">Discord로 로그인</button>
-        <button class="btn" id="btnKakao">Kakao로 로그인</button>
+      <div class="row">
+        <button class="btn primary" id="btnGoogle" type="button">Google로 로그인</button>
+        <button class="btn" id="btnDiscord" type="button">Discord로 로그인</button>
+        <button class="btn" id="btnKakao" type="button">Kakao로 로그인</button>
       </div>
 
-      <div class="note">로그인 후 자동으로 홈으로 돌아가요.</div>
+      <div class="hr"></div>
+      <div class="notice">로그인 후 자동으로 홈으로 돌아가요.</div>
     </div>
   </main>
 
-  <script type="module">
-    import { supabase, renderHeader } from "./supabase.js";
-    await renderHeader();
-
-    const redirectTo = location.origin + "/index.html";
-
-    document.getElementById("btnGoogle").onclick = () =>
-      supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo } });
-
-    document.getElementById("btnDiscord").onclick = () =>
-      supabase.auth.signInWithOAuth({ provider: "discord", options: { redirectTo } });
-
-    document.getElementById("btnKakao").onclick = () =>
-      supabase.auth.signInWithOAuth({ provider: "kakao", options: { redirectTo } });
-  </script>
+  <script type="module" src="./login.js"></script>
 </body>
 </html>

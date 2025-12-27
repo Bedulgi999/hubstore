@@ -4,18 +4,157 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>관리자 - 허브 스토어</title>
-  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
+  <!-- ✅ 헤더 -->
   <div id="header"></div>
 
-  <main class="container" style="padding:22px 0;">
-    <div id="adminBox"></div>
+  <main class="container admin-page">
+    <!-- 상단 안내 -->
+    <section class="admin-hero card">
+      <div class="admin-hero-top">
+        <div>
+          <h1 class="admin-title">관리자 페이지</h1>
+          <p class="admin-sub">권한/배너/카테고리 + 포인트 지급</p>
+        </div>
+        <div class="admin-badge">
+          <span class="dot"></span>
+          <span>ADMIN</span>
+        </div>
+      </div>
+      <div class="admin-hero-tip">
+        관리자만 접근 가능. 아래 기능들은 기존 기능 유지 + 포인트 기능 추가됨.
+      </div>
+    </section>
+
+    <section class="admin-grid">
+      <!-- ✅ (기존) 권한 설정 -->
+      <section class="card admin-card">
+        <div class="admin-card-head">
+          <h2>권한 설정</h2>
+          <p class="muted">UUID로 관리자/판매자 권한 부여/해제</p>
+        </div>
+
+        <div class="admin-form">
+          <label class="label">대상 UUID</label>
+          <div class="admin-row">
+            <input id="targetUuid" class="input" placeholder="대상 UUID" />
+            <button id="btnLoadUser" class="btn" type="button">불러오기</button>
+          </div>
+
+          <div id="userPreview" class="admin-preview muted">불러오면 여기 표시됨</div>
+
+          <div class="admin-row admin-row-tight">
+            <label class="check">
+              <input id="chkAdmin" type="checkbox" />
+              <span>관리자</span>
+            </label>
+
+            <label class="check">
+              <input id="chkSeller" type="checkbox" />
+              <span>판매자</span>
+            </label>
+
+            <button id="btnSaveRole" class="btn primary" type="button">저장</button>
+          </div>
+
+          <div id="roleMsg" class="admin-msg muted"></div>
+        </div>
+      </section>
+
+      <!-- ✅ (기존) 카테고리 관리 -->
+      <section class="card admin-card">
+        <div class="admin-card-head">
+          <h2>카테고리 관리</h2>
+          <p class="muted">카테고리 추가/삭제</p>
+        </div>
+
+        <div class="admin-form">
+          <label class="label">카테고리 이름</label>
+          <div class="admin-row">
+            <input id="categoryName" class="input" placeholder="카테고리 이름" />
+            <button id="btnAddCategory" class="btn primary" type="button">추가</button>
+          </div>
+
+          <div class="admin-list" id="categoryList"></div>
+          <div id="catMsg" class="admin-msg muted"></div>
+        </div>
+      </section>
+
+      <!-- ✅ (추가) 관리자 포인트 지급 -->
+      <section class="card admin-card">
+        <div class="admin-card-head">
+          <h2>포인트 지급</h2>
+          <p class="muted">관리자만 특정 유저(UUID)에게 포인트를 지급/차감</p>
+        </div>
+
+        <div class="admin-form">
+          <label class="label">대상 유저 UUID</label>
+          <input id="grantTargetUuid" class="input" placeholder="예: 123e4567-e89b-12d3-a456-426614174000" />
+
+          <div class="admin-grid-2">
+            <div>
+              <label class="label">포인트 (양수=지급 / 음수=차감)</label>
+              <input id="grantAmount" class="input" type="number" value="500" />
+            </div>
+            <div>
+              <label class="label">사유</label>
+              <input id="grantReason" class="input" placeholder="예: 이벤트 지급" value="이벤트 지급" />
+            </div>
+          </div>
+
+          <div class="admin-row">
+            <button id="btnGrantPoints" class="btn primary" type="button">지급 실행</button>
+            <span class="muted" id="grantMsg"></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ✅ (기존) 배너 관리 -->
+      <section class="card admin-card admin-card-wide">
+        <div class="admin-card-head">
+          <h2>배너 관리</h2>
+          <p class="muted">배너 이미지 + seller_id(선택) 설정</p>
+        </div>
+
+        <div class="admin-form">
+          <div class="admin-grid-2">
+            <div>
+              <label class="label">배너 제목</label>
+              <input id="bannerTitle" class="input" placeholder="예: 이달의 추천 판매자" />
+            </div>
+            <div>
+              <label class="label">seller_id(UUID, 선택)</label>
+              <input id="bannerSellerId" class="input" placeholder="연결할 seller_id" />
+            </div>
+          </div>
+
+          <label class="label">배너 설명</label>
+          <input id="bannerDesc" class="input" placeholder="예: 신규 상품 구경하러 가기" />
+
+          <label class="label">배너 이미지 파일</label>
+          <div class="admin-row">
+            <input id="bannerFile" class="input file" type="file" accept="image/*" />
+            <button id="btnAddBanner" class="btn primary" type="button">배너 추가</button>
+          </div>
+
+          <div class="admin-list banners" id="bannerList"></div>
+          <div id="bannerMsg" class="admin-msg muted"></div>
+        </div>
+      </section>
+    </section>
   </main>
 
+  <!-- ✅ 헤더 렌더 -->
   <script type="module">
-    import { initAdminPage } from "/app.js";
-    initAdminPage();
+    import { renderHeader } from "./header.js";
+    await renderHeader();
   </script>
+
+  <!-- ✅ 너가 이미 쓰던 기존 기능 파일: 그대로 유지 -->
+  <script type="module" src="./admin.js"></script>
+
+
 </body>
 </html>

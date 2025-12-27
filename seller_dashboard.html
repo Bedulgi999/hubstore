@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>판매자 대시보드 - 허브 스토어</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div id="header"></div>
+
+  <main class="page-wrap">
+    <div class="card page-card">
+      <h1 class="page-title">판매자 대시보드</h1>
+      <p class="page-sub">내 판매자 카드/상품을 관리해</p>
+
+      <div class="hr"></div>
+
+      <h3 style="margin:0 0 8px;">판매자 카드 설정</h3>
+      <div class="form">
+        <div class="row">
+          <div class="field" style="flex:1;min-width:220px;">
+            <label>판매자 이름(타이틀)</label>
+            <input id="sTitle" placeholder="예: GodDot Gaming" />
+          </div>
+          <div class="field" style="flex:1;min-width:220px;">
+            <label>소개(짧게)</label>
+            <input id="sBio" placeholder="예: 미니게임 제작자" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field" style="flex:1;min-width:220px;">
+            <label>아바타 이미지 파일</label>
+            <input id="sAvatarFile" type="file" accept="image/*"/>
+          </div>
+          <div class="field" style="flex:1;min-width:220px;">
+            <label>커버(배너용) 이미지 파일</label>
+            <input id="sCoverFile" type="file" accept="image/*"/>
+          </div>
+        </div>
+
+        <div class="row">
+          <label style="display:flex;gap:8px;align-items:center;font-weight:900;">
+            <input id="sRecommended" type="checkbox"> 추천 판매자
+          </label>
+          <label style="display:flex;gap:8px;align-items:center;font-weight:900;">
+            <input id="sVisible" type="checkbox" checked> 노출
+          </label>
+          <button class="btn primary" id="btnSaveSeller">저장</button>
+        </div>
+
+        <div class="muted" id="sellerMsg" style="font-weight:800;"></div>
+      </div>
+
+      <div class="hr"></div>
+
+      <h3 style="margin:0 0 8px;">상품 등록(간단)</h3>
+      <div class="form">
+        <div class="row">
+          <div class="field" style="flex:1;min-width:220px;">
+            <label>상품 제목</label>
+            <input id="pTitle" placeholder="예: TNT 러시 미니게임" />
+          </div>
+          <div class="field" style="width:180px;">
+            <label>가격</label>
+            <input id="pPrice" type="number" placeholder="30000" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="field" style="flex:1;min-width:220px;">
+            <label>카테고리(이름)</label>
+            <input id="pCategory" placeholder="예: 미니게임" />
+          </div>
+          <div class="field" style="flex:1;min-width:220px;">
+            <label>상품 이미지 파일</label>
+            <input id="pImageFile" type="file" accept="image/*"/>
+          </div>
+        </div>
+        <div class="row">
+          <label style="display:flex;gap:8px;align-items:center;font-weight:900;">
+            <input id="pPublished" type="checkbox" checked> published
+          </label>
+          <button class="btn primary" id="btnAddProduct">등록</button>
+        </div>
+        <div class="muted" id="prodMsg" style="font-weight:800;"></div>
+      </div>
+    </div>
+  </main>
+
+  <script type="module" src="./seller_dashboard.js"></script>
+</body>
+</html>

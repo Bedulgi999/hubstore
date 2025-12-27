@@ -3,11 +3,36 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>허브 스토어</title>
+  <title>판매자 - 허브 스토어</title>
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
-  <div id="app"></div>
-  <script type="module" src="./app.js"></script>
+  <div id="header"></div>
+
+  <main class="page-wrap">
+    <div class="card page-card" id="sellerCard">
+      <div class="row" style="justify-content:space-between;align-items:center;">
+        <div class="row" style="gap:12px;">
+          <div class="avatar" style="width:44px;height:44px;">
+            <img id="sellerAvatar" alt="seller"/>
+          </div>
+          <div>
+            <div style="font-weight:1000;font-size:18px;letter-spacing:-.2px" id="sellerTitle">판매자</div>
+            <div class="muted" style="font-weight:800" id="sellerBio"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>판매 중인 상품</h2>
+        <span class="muted">이 판매자가 등록한 상품</span>
+      </div>
+      <div id="sellerProducts" class="grid products"></div>
+    </section>
+  </main>
+
+  <script type="module" src="./seller.js"></script>
 </body>
 </html>
